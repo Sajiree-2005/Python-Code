@@ -1,0 +1,136 @@
+# Hangman Game 🎯
+A simple and fun **Hangman** game implemented in **Python**.  
+This project demonstrates basic programming concepts such as loops, conditionals, string manipulation, and user interaction through the terminal.
+
+## 📌 Features
+- Randomly selects a word from a predefined list  
+- Tracks guessed letters and remaining attempts  
+- Displays progress after each guess  
+- Prevents repeated guesses  
+- Clear win/lose messages  
+
+## 🧩 How to Play
+1. Run the Python script.  
+2. Guess one letter at a time.  
+3. You have a limited number of incorrect attempts.  
+4. Reveal the full word before attempts run out to win!
+
+## ▶️ Running the Game
+```bash
+python hangman.py
+
+## Program :
+import random
+
+# Hangman ASCII art for each stage
+HANGMAN_PICS = ['''
+  +---+
+      |
+      |
+      |
+     ===''', '''
+
+  +---+
+  O   |
+      |
+      |
+     ===''', '''
+
+  +---+
+  O   |
+  |   |
+      |
+     ===''', '''
+
+  +---+
+  O   |
+ /|   |
+      |
+     ===''', '''
+
+  +---+
+  O   |
+ /|\  |
+      |
+     ===''', '''
+
+  +---+
+  O   |
+ /|\  |
+ /    |
+     ===''', '''
+
+  +---+
+  O   |
+ /|\  |
+ / \  |
+     ===''']
+
+# List of words for the game
+WORDS = [
+    "python", "development", "hangman", "programming", "artificial", 
+    "intelligence", "machine", "variable", "function", "loop"
+]
+
+def get_random_word(word_list):
+    return random.choice(word_list).lower()
+
+def display_game_state(missed_letters, correct_letters, secret_word):
+    print(HANGMAN_PICS[len(missed_letters)])
+    print("\nMissed letters:", " ".join(missed_letters))
+
+    blanks = ""
+    for letter in secret_word:
+        if letter in correct_letters:
+            blanks += letter + " "
+        else:
+            blanks += "_ "
+
+    print("Word: ", blanks)
+
+def play_hangman():
+    print("🎉 Welcome to Hangman!")
+    secret_word = get_random_word(WORDS)
+    missed_letters = []
+    correct_letters = []
+    game_over = False
+
+    while not game_over:
+        display_game_state(missed_letters, correct_letters, secret_word)
+
+        guess = input("\nGuess a letter: ").lower()
+
+        # Input validation
+        if len(guess) != 1:
+            print("Please enter a single letter.")
+            continue
+        if not guess.isalpha():
+            print("Please enter a valid letter.")
+            continue
+        if guess in missed_letters or guess in correct_letters:
+            print("You've already guessed that letter.")
+            continue
+
+        # Process guess
+        if guess in secret_word:
+            correct_letters.append(guess)
+
+            # Check if player won
+            if all(letter in correct_letters for letter in secret_word):
+                print(HANGMAN_PICS[len(missed_letters)])
+                print(f"\n🎉 Congratulations! You guessed the word: {secret_word}")
+                game_over = True
+        else:
+            missed_letters.append(guess)
+
+            # Check if player lost
+            if len(missed_letters) == len(HANGMAN_PICS) - 1:
+                display_game_state(missed_letters, correct_letters, secret_word)
+                print("\n💀 Game Over! You've been hanged!")
+                print(f"The word was: {secret_word}")
+                game_over = True
+
+    print("\nThanks for playing Hangman! 😄")
+
+if __name__ == "__main__":
+    play_hangman()
